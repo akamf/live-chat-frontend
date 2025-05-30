@@ -5,7 +5,7 @@ import {
 } from "@clerk/clerk-react";
 import Chat from "./Chat";
 
-export default function App() {
+const App = () => {
   return (
      <main className="min-h-screen w-full bg-gray-100 flex items-center justify-center">
       <SignedOut>
@@ -17,3 +17,5 @@ export default function App() {
     </main>
   );
 }
+
+export default App;

@@ -4,7 +4,11 @@ import { CompatClient, Stomp } from "@stomp/stompjs";
 import { ChatMessage } from "../types";
 
 
-export default function Chat() {
+const SOCKET_URI = import.meta.env.VITE_SOCKET_URI;
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+const Chat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sender, setSender] = useState("Guest");
@@ -18,7 +22,7 @@ export default function Chat() {
   useEffect(() => {
     async function fetchMessages() {
       try {
-        const res = await fetch("http://localhost:8080/api/messages/recent");
+        const res = await fetch(`${API_URL}/messages/recent`);
         const data = await res.json();
         setMessages(data);
       } catch (err) {
@@ -26,7 +30,7 @@ export default function Chat() {
       }
     }
 
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS(SOCKET_URI);
     const client = Stomp.over(socket);
     client.connect({}, () => {
       client.subscribe("/topic/chat", (msg) => {
@@ -102,3 +106,5 @@ export default function Chat() {
     </div>
   );
 }
+
+export default Chat;
