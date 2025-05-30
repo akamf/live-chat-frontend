@@ -7,5 +7,8 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     react()
-  ]
+  ],
+  define: {
+    global: 'globalThis'
+  }
 })
