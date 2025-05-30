@@ -3,7 +3,7 @@ import {
   SignInButton, 
   SignedIn 
 } from "@clerk/clerk-react";
-import Chat from "./Chat";
+import Chat from "./components/Chat";
 
 const App = () => {
   return (
