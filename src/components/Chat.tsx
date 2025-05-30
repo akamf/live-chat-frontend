@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client";
-import { CompatClient, Stomp } from "@stomp/stompjs";
+import { CompatClient } from "@stomp/stompjs";
 import { ChatMessage } from "../types";
-import { useUser, useAuth } from "@clerk/clerk-react";
-
-
-const SOCKET_URI = import.meta.env.VITE_SOCKET_URI;
-const API_URL = import.meta.env.VITE_API_URL;
-
+import { useUser } from "@clerk/clerk-react";
+import { useClerkToken } from "../hooks/useClerkToken";
+import { useChatConnection } from "../hooks/useChatConnection";
+import { fetchRecentMessages } from "../utils/api";
 
 const Chat = () => {
-
   const { user } = useUser();
-  const { getToken } = useAuth();
-  
+  const { storeToken } = useClerkToken();
+  const [sender, setSender] = useState("Anonymous");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
+  const stompClientRef = useRef<CompatClient | null>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (user) {
       setSender(user.fullName || user.username || "Anonymous");
@@ -21,60 +22,31 @@ const Chat = () => {
   }, [user]);
 
   useEffect(() => {
-    async function fetchToken() {
-      const jwt = await getToken({ template: "Login-User-JWT" });
-      if (jwt) {
-        localStorage.setItem("token", jwt);
-      }
-    }
-    fetchToken();
-  }, [getToken]);
-  
-
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [sender, setSender] = useState("Guest");
-  const stompClientRef = useRef<CompatClient | null>(null);
-  const messageEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+    storeToken();
+  }, [storeToken]);
 
   useEffect(() => {
-    async function fetchMessages() {
-      try {
-        const res = await fetch(`${API_URL}/messages/recent`);
-        const data = await res.json();
-        setMessages(data);
-      } catch (err) {
-        console.error("Failed to fetch messages:", err);
-      }
-    }
+    const load = async () => {
+      await fetchRecentMessages(setMessages);
+    };
+    load(); 
 
-    const socket = new SockJS(SOCKET_URI);
-    const client = Stomp.over(socket);
-    client.connect({}, () => {
-      client.subscribe("/topic/chat", (msg) => {
-        const body = JSON.parse(msg.body) as ChatMessage;
-        setMessages((prev) => [...prev, body]);
-      });
-    });
+    const client = useChatConnection(setMessages);
+    client.activate();
 
     stompClientRef.current = client;
-    fetchMessages();
 
     return () => {
-      client.disconnect(() => {
-        console.log("Disconnected");
-      });
+      client.deactivate();
     };
   }, []);
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = () => {
-    if (input.trim() === "") return;
+    if (!input.trim()) return;
 
     const message: ChatMessage = {
       sender,
@@ -88,8 +60,8 @@ const Chat = () => {
 
   return (
     <div className="max-w-xl mx-auto p-4 space-y-4">
-      <h2 className="text-2xl font-bold text-center">💬 Real-Time Chat</h2>
-      
+      <h2 className="text-2xl font-bold text-center">\ud83d\udcac Real-Time Chat</h2>
+
       <div className="h-80 overflow-y-auto border rounded p-2 bg-white shadow-sm">
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
@@ -120,6 +92,6 @@ const Chat = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Chat;
