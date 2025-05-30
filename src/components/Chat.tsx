@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
+import { ChatMessage } from "../types";
 
-// Typ för våra meddelanden
-interface ChatMessage {
-  sender: string;
-  content: string;
-  timestamp: string;
-}
 
 export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -16,14 +11,11 @@ export default function Chat() {
   const stompClientRef = useRef<CompatClient | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll till senaste meddelandet
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Hämta historik + init WebSocket
   useEffect(() => {
-    // Fetch senaste 50
     async function fetchMessages() {
       try {
         const res = await fetch("http://localhost:8080/api/messages/recent");
@@ -34,7 +26,6 @@ export default function Chat() {
       }
     }
 
-    // WebSocket
     const socket = new SockJS("http://localhost:8080/ws");
     const client = Stomp.over(socket);
     client.connect({}, () => {
@@ -56,14 +47,13 @@ export default function Chat() {
 
   useEffect(scrollToBottom, [messages]);
 
-  // Skicka nytt meddelande
   const handleSend = () => {
     if (input.trim() === "") return;
 
     const message: ChatMessage = {
       sender,
       content: input.trim(),
-      timestamp: new Date().toISOString(), // kan överskrivas i backend
+      timestamp: new Date().toISOString(),
     };
 
     stompClientRef.current?.send("/app/chat", {}, JSON.stringify(message));
@@ -74,7 +64,6 @@ export default function Chat() {
     <div className="max-w-xl mx-auto p-4 space-y-4">
       <h2 className="text-2xl font-bold text-center">💬 Real-Time Chat</h2>
 
-      {/* Namn */}
       <input
         value={sender}
         onChange={(e) => setSender(e.target.value)}
@@ -82,7 +71,6 @@ export default function Chat() {
         placeholder="Your name"
       />
 
-      {/* Meddelandelista */}
       <div className="h-80 overflow-y-auto border rounded p-2 bg-white shadow-sm">
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
@@ -96,7 +84,6 @@ export default function Chat() {
         <div ref={messageEndRef} />
       </div>
 
-      {/* Inputfält */}
       <div className="flex gap-2">
         <input
           value={input}
