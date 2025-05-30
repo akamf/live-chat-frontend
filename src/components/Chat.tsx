@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { ChatMessage } from "../types";
+import { useUser, useAuth } from "@clerk/clerk-react";
 
 
 const SOCKET_URI = import.meta.env.VITE_SOCKET_URI;
@@ -9,6 +10,27 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 const Chat = () => {
+
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  
+  useEffect(() => {
+    if (user) {
+      setSender(user.fullName || user.username || "Anonymous");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    async function fetchToken() {
+      const jwt = await getToken({ template: "Login-User-JWT" });
+      if (jwt) {
+        localStorage.setItem("token", jwt);
+      }
+    }
+    fetchToken();
+  }, [getToken]);
+  
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sender, setSender] = useState("Guest");
@@ -67,14 +89,7 @@ const Chat = () => {
   return (
     <div className="max-w-xl mx-auto p-4 space-y-4">
       <h2 className="text-2xl font-bold text-center">💬 Real-Time Chat</h2>
-
-      <input
-        value={sender}
-        onChange={(e) => setSender(e.target.value)}
-        className="w-full p-2 rounded border"
-        placeholder="Your name"
-      />
-
+      
       <div className="h-80 overflow-y-auto border rounded p-2 bg-white shadow-sm">
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
