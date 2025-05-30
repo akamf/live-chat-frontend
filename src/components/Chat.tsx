@@ -62,7 +62,7 @@ const Chat = () => {
     <div className="max-w-xl mx-auto p-4 space-y-4">
       <h2 className="text-2xl font-bold text-center">\ud83d\udcac Real-Time Chat</h2>
 
-      <div className="h-80 overflow-y-auto border rounded p-2 bg-white shadow-sm">
+      <div className="h-80 text-start overflow-y-auto border rounded p-2 bg-white shadow-sm">
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
             <span className="font-semibold">{msg.sender}: </span>
