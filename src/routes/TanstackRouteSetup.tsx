@@ -17,9 +17,9 @@ const rootRoute = createRootRoute({
   component: () => (
     <section className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 px-4 sm:px-6 md:px-8 py-4">
         <SignedOut>
-          <div className="flex flex-1 items-center justify-center">
+          <div className="flex items-center justify-center h-full">
             <SignInButton />
           </div>
         </SignedOut>
