@@ -15,7 +15,7 @@ import { ChatRoomList, ChatRoom } from '@pages/chat';
 
 const rootRoute = createRootRoute({
   component: () => (
-    <section className="min-h-screen w-full bg-gray-100 flex flex-col">
+    <section className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col">
       <Navbar />
       <main className="flex-1">
         <SignedOut>
