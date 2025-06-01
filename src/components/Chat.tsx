@@ -6,7 +6,11 @@ import { useClerkToken } from "../hooks/useClerkToken";
 import { useChatConnection } from "../hooks/useChatConnection";
 import { fetchRecentMessages } from "../utils/api";
 
-const Chat = () => {
+interface ChatProps {
+  roomId: string;
+}
+
+const Chat = ({ roomId }: ChatProps) => {
   const { user } = useUser();
   const { storeToken } = useClerkToken();
   const [sender, setSender] = useState("Anonymous");
@@ -27,7 +31,7 @@ const Chat = () => {
 
   useEffect(() => {
     const load = async () => {
-      await fetchRecentMessages(setMessages);
+      await fetchRecentMessages(setMessages, roomId);
     };
     load();
 

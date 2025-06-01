@@ -1,10 +1,11 @@
 import { ChatMessage } from "../types";
 
 export const fetchRecentMessages = async (
-  setMessages: (msgs: ChatMessage[]) => void
+  setMessages: (msgs: ChatMessage[]) => void,
+  roomId: string
 ) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/recent`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/${roomId}`);
     const data = await res.json();
     setMessages(data);
   } catch (err) {
