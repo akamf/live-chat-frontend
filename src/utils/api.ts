@@ -11,3 +11,9 @@ export const fetchRecentMessages = async (
     console.error("Failed to fetch messages:", err);
   }
 };
+
+export const fetchOnlineUsers = async (): Promise<Record<string, number>> => {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/online`);
+  if (!res.ok) throw new Error("Failed to fetch online users");
+  return res.json();
+};
