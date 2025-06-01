@@ -60,7 +60,12 @@ const Chat = () => {
 
   return (
     <div className="max-w-xl mx-auto p-4 space-y-4">
-      <h2 className="text-2xl font-bold text-center">\ud83d\udcac Real-Time Chat</h2>
+      <h2 className="text-2xl font-bold text-center">Real-Time Chat</h2>
+      {user && (
+        <p className="text-sm text-gray-600 mb-2 text-center">
+          Logged in as <span className="font-semibold">{user.fullName || user.username}</span>
+        </p>
+      )}
 
       <div className="h-80 text-start overflow-y-auto border rounded p-2 bg-white shadow-sm">
         {messages.map((msg, idx) => (

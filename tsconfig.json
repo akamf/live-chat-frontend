@@ -18,6 +18,7 @@
     "baseUrl": "./src",
     "paths": {
       "@pages/*": ["pages/*"],
+      "@components": ["components/index.ts"],
       "@components/*": ["components/*"],
       "@router/*": ["router/*"],
       "@utils/*": ["utils/*"],

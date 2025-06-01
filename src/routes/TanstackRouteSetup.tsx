@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { SignedOut, SignedIn, SignInButton } from '@clerk/clerk-react';
 
-// import { Navbar, Footer } from '@components';
+import { Navbar, Footer } from '@components';
 import { Index } from '@pages/index';
 import { Profile } from '@pages/profile';
 import { SignIn, Register } from '@pages/auth';
@@ -15,18 +15,20 @@ import { ChatRoomList, ChatRoom } from '@pages/chat';
 
 const rootRoute = createRootRoute({
   component: () => (
-    <main className="min-h-screen w-full bg-gray-100 flex flex-col">
-      {/* <Navbar /> */}
-      <SignedOut>
-        <div className="flex flex-1 items-center justify-center">
-          <SignInButton />
-        </div>
-      </SignedOut>
-      <SignedIn>
-        <Outlet />
-      </SignedIn>
-      {/* <Footer /> */}
-    </main>
+    <section className="min-h-screen w-full bg-gray-100 flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <SignedOut>
+          <div className="flex flex-1 items-center justify-center">
+            <SignInButton />
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <Outlet />
+        </SignedIn>
+      </main>
+      <Footer />
+    </section>
   ),
 });
 
