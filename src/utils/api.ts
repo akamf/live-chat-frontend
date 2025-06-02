@@ -1,7 +1,7 @@
 import { ChatMessage } from "../types";
 
 export async function fetchRecentMessages(
-  setMessages: (msgs: any[]) => void,
+  setMessages: (msgs: ChatMessage[]) => void,
   roomId: string
 ) {
   try {

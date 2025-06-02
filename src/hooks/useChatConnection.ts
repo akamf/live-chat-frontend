@@ -22,7 +22,7 @@ export const useChatConnection = (
         console.log("✅ WebSocket connected to room", roomId);
         client.subscribe(`/topic/${roomId}`, (message) => {
           if (message.body) {
-            console.log("📨 Incoming message");
+            console.log("📨 Incoming message:", message.body);
             onMessageReceived((prev) => [...prev, JSON.parse(message.body)]);
           }
         });

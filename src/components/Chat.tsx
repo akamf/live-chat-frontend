@@ -5,21 +5,19 @@ import { useUser } from "@clerk/clerk-react";
 import { useClerkToken } from "../hooks/useClerkToken";
 import { useChatConnection } from "../hooks/useChatConnection";
 import { fetchRecentMessages } from "@utils/api";
+import { isValidDate } from "@utils/date";
 
 interface ChatProps {
   roomId: string;
 }
 
 const Chat = ({ roomId }: ChatProps) => {
-  console.log("Inside chat room", roomId);
-
   const { user } = useUser();
   const { storeToken } = useClerkToken();
   const [sender, setSender] = useState("Anonymous");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const stompClientRef = useRef<CompatClient | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -31,6 +29,10 @@ const Chat = ({ roomId }: ChatProps) => {
     storeToken();
   }, [storeToken]);
 
+  useEffect(() => {
+    fetchRecentMessages(setMessages, roomId);
+  }, [roomId]);
+
   const stompClient = useChatConnection(roomId, setMessages);
 
   const handleSend = () => {
@@ -41,18 +43,11 @@ const Chat = ({ roomId }: ChatProps) => {
       content: input.trim(),
       timestamp: new Date().toISOString(),
     };
-    console.log("Sending to room:", roomId);
 
     stompClient?.publish({
       destination: `/app/chat`,
-      body: JSON.stringify({
-        sender,
-        content: input.trim(),
-        timestamp: new Date().toISOString(),
-        roomId,
-      }),
+      body: JSON.stringify({ ...message, roomId }),
     });
-    console.log("Message sent!\nMessage:", message);
     
     setInput("");
   };
@@ -67,7 +62,7 @@ const Chat = ({ roomId }: ChatProps) => {
             <span className="font-semibold">{msg.sender}: </span>
             <span>{msg.content}</span>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              {new Date(msg.timestamp).toLocaleTimeString()}
+              {isValidDate(msg.timestamp) ? new Date(msg.timestamp).toLocaleTimeString() : "Invalid date"}           
             </div>
           </div>
         ))}
