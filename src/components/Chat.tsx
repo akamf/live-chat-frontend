@@ -11,6 +11,8 @@ interface ChatProps {
 }
 
 const Chat = ({ roomId }: ChatProps) => {
+  console.log("Inside chat room", roomId);
+
   const { user } = useUser();
   const { storeToken } = useClerkToken();
   const [sender, setSender] = useState("Anonymous");
@@ -29,20 +31,8 @@ const Chat = ({ roomId }: ChatProps) => {
     storeToken();
   }, [storeToken]);
 
-  useEffect(() => {
-    const load = async () => {
-      await fetchRecentMessages(setMessages, roomId);
-    };
-    load();
-
-    const client = useChatConnection(roomId, setMessages);
-    client.activate();
-    stompClientRef.current = client;
-
-    return () => {
-      client.deactivate();
-    };
-  }, [roomId]); 
+  
+  useChatConnection(roomId, setMessages);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -52,13 +42,13 @@ const Chat = ({ roomId }: ChatProps) => {
       content: input.trim(),
       timestamp: new Date().toISOString(),
     };
+    console.log("Sending to room:", roomId);
 
-    if (stompClientRef.current && stompClientRef.current.connected) {
-      stompClientRef.current.publish(
-        { destination: `/app/chat/${roomId}`, body: JSON.stringify(message) }
-      );
-      console.log("Message sent!\nMessage:", message)
-    }
+    stompClientRef.current?.publish(
+      { destination: `/app/chat/${roomId}`, body: JSON.stringify(message) }
+    );
+    console.log("Message sent!\nMessage:", message);
+    
     setInput("");
   };
 
