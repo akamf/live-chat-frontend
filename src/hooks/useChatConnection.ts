@@ -5,27 +5,29 @@ import SockJS from "sockjs-client";
 export const useChatConnection = (
   roomId: string,
   onMessageReceived: (updateFn: (prev: any[]) => any[]) => void
-): void => {
+): Client | null => {
   const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
-    if (!roomId) return; // vänta tills roomId finns
+    if (!roomId) return;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_SOCKET_URI}?room-id=${roomId}`),
+      webSocketFactory: () =>
+        new SockJS(`${import.meta.env.VITE_SOCKET_URI}?room-id=${roomId}`), 
       reconnectDelay: 5000,
       connectHeaders: {
         "room-id": roomId,
       },
       onConnect: () => {
-        console.log("WebSocket connected to room", roomId);
+        console.log("✅ WebSocket connected to room", roomId);
         client.subscribe(`/topic/${roomId}`, (message) => {
           if (message.body) {
+            console.log("📨 Incoming message");
             onMessageReceived((prev) => [...prev, JSON.parse(message.body)]);
           }
         });
       },
-      onStompError: (err) => console.error("STOMP error:", err),
+      onStompError: (err) => console.error("❌ STOMP error:", err),
     });
 
     client.activate();
@@ -35,4 +37,6 @@ export const useChatConnection = (
       client.deactivate();
     };
   }, [roomId]);
+
+  return clientRef.current;
 };
