@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CompatClient } from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import { ChatMessage } from "../types";
 import { useUser } from "@clerk/clerk-react";
 import { useClerkToken } from "../hooks/useClerkToken";
@@ -16,7 +16,7 @@ const Chat = ({ roomId }: ChatProps) => {
   const [sender, setSender] = useState("Anonymous");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const stompClientRef = useRef<CompatClient | null>(null);
+  const stompClientRef = useRef<Client | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,18 +35,14 @@ const Chat = ({ roomId }: ChatProps) => {
     };
     load();
 
-    const client = useChatConnection(setMessages);
+    const client = useChatConnection(roomId, setMessages);
     client.activate();
     stompClientRef.current = client;
 
     return () => {
       client.deactivate();
     };
-  }, []);
-
-  useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [roomId]); 
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -57,7 +53,12 @@ const Chat = ({ roomId }: ChatProps) => {
       timestamp: new Date().toISOString(),
     };
 
-    stompClientRef.current?.send("/app/chat", {}, JSON.stringify(message));
+    if (stompClientRef.current && stompClientRef.current.connected) {
+      stompClientRef.current.publish(
+        { destination: `/app/chat/${roomId}`, body: JSON.stringify(message) }
+      );
+      console.log("Message sent!\nMessage:", message)
+    }
     setInput("");
   };
 
