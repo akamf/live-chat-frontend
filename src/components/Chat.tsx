@@ -52,12 +52,18 @@ const Chat = ({ roomId }: ChatProps) => {
     setInput("");
   };
 
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 space-y-4">
       <h2 className="text-2xl font-bold text-center dark:text-white">💬 Real-Time Chat</h2>
 
       <div className="text-start h-80 overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100">
-        {messages.map((msg, idx) => (
+        {[...messages]
+          .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+          .map((msg, idx) => (
           <div key={idx} className="mb-3">
             <span className="font-semibold">{msg.sender}: </span>
             <span>{msg.content}</span>
