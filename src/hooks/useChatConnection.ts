@@ -4,6 +4,7 @@ import SockJS from "sockjs-client";
 
 export const useChatConnection = (
   roomId: string,
+  user: any | null,
   onMessageReceived: (updateFn: (prev: any[]) => any[]) => void
 ): Client | null => {
   const clientRef = useRef<Client | null>(null);
@@ -12,11 +13,11 @@ export const useChatConnection = (
     if (!roomId) return;
 
     const client = new Client({
-      webSocketFactory: () =>
-        new SockJS(`${import.meta.env.VITE_SOCKET_URI}?room-id=${roomId}`), 
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_SOCKET_URI}?room-id=${roomId}`), 
       reconnectDelay: 5000,
       connectHeaders: {
         "room-id": roomId,
+        "user-id": user?.id || "anonymous", 
       },
       onConnect: () => {
         console.log("✅ WebSocket connected to room", roomId);
@@ -27,7 +28,7 @@ export const useChatConnection = (
           }
         });
       },
-      onStompError: (err) => console.error("❌ STOMP error:", err),
+      onStompError: (err) => console.error("STOMP error:", err),
     });
 
     client.activate();

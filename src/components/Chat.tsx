@@ -33,7 +33,7 @@ const Chat = ({ roomId }: ChatProps) => {
     fetchRecentMessages(setMessages, roomId);
   }, [roomId]);
 
-  const stompClient = useChatConnection(roomId, setMessages);
+  const stompClient = useChatConnection(roomId, user, setMessages);
 
   const handleSend = () => {
     if (!input.trim()) return;

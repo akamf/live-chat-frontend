@@ -1,17 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { fetchOnlineUsers } from "@utils/api";
+import { fetchOnlineUsers, fetchPublicChatRooms } from "@utils/api";
 
 const ChatRoomList = () => {
   const navigate = useNavigate();
   const [selectedRoom, setSelectedRoom] = useState("");
   const [onlineMap, setOnlineMap] = useState<Record<string, number>>({});
+  const [rooms, setRooms] = useState<{ id: string; name: string; maxUsers: number }[]>([]);
 
-  const rooms = [
-    { id: "1", name: "Chat Room 1", max: 8 },
-    // TODO: Add dynamically
-  ];
+  useEffect(() => {
+    const loadRooms = async () => {
+      try {
+        const data = await fetchPublicChatRooms();
+        setRooms(data.map((room: any) => ({
+          id: room.id.toString(),
+          name: room.name,
+          maxUsers: room.maxUsers
+        })));
+      } catch (err) {
+        console.error("Could not fetch rooms", err);
+      }
+    };
 
+    loadRooms();
+  }, []);
+  
   useEffect(() => {
     const loadOnline = async () => {
       try {
@@ -55,7 +68,7 @@ const ChatRoomList = () => {
           const online = onlineMap[room.id] || 0;
           return (
             <option key={room.id} value={room.id}>
-              {`${room.name} ${online}/${room.max} in room`}
+              {`${room.name} ${online}/${room.maxUsers} in room`}
             </option>
           );
         })}
