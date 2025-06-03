@@ -31,7 +31,7 @@ jobs:
         run: gcloud auth configure-docker europe-north2-docker.pkg.dev
 
       - name: Docker Build
-        run: docker build --build-arg VITE_CLERK_PUBLISHABLE_KEY="${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}" VITE_SOCKET_URL="${{ vars.VITE_SOCKET_URL }}" VITE_API_URL="${{ vars.VITE_API_URL }}"--no-cache -t ${{ env.IMAGE_URL }} . -f Dockerfile
+        run: docker build --build-arg VITE_CLERK_PUBLISHABLE_KEY="${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}" --build-arg VITE_SOCKET_URL="${{ vars.VITE_SOCKET_URL }}" --build-arg VITE_API_URL="${{ vars.VITE_API_URL }}"--no-cache -t ${{ env.IMAGE_URL }} . -f Dockerfile
 
       - name: Docker Push
         run: docker push $IMAGE_URL
