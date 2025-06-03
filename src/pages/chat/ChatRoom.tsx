@@ -37,7 +37,7 @@ const ChatRoomList = () => {
 
     loadOnline();
 
-    const interval = setInterval(loadOnline, 5000);
+    const interval = setInterval(loadOnline, 10000);
     return () => clearInterval(interval);
   }, []);
 
