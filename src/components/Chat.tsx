@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Client, CompatClient } from "@stomp/stompjs";
 import { ChatMessage } from "../types";
 import { useUser } from "@clerk/clerk-react";
 import { useClerkToken } from "../hooks/useClerkToken";
@@ -18,8 +17,10 @@ const Chat = ({ roomId }: ChatProps) => {
   const [sender, setSender] = useState("Anonymous");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState<string | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const participants = useParticipants(roomId);
+  const stompClient = useChatConnection(roomId, user, setMessages);
 
   useEffect(() => {
     if (user) {
@@ -35,7 +36,42 @@ const Chat = ({ roomId }: ChatProps) => {
     fetchRecentMessages(setMessages, roomId);
   }, [roomId]);
 
-  const stompClient = useChatConnection(roomId, user, setMessages);
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    if (!stompClient || !stompClient.connected) return;
+
+    const subscription = stompClient.subscribe(
+      `/topic/${roomId}/typing`,
+      (msg) => {
+        const data = JSON.parse(msg.body);
+        if (data.typing && data.userId !== user?.id) {
+          setIsTyping(`${data.username} is typing...`);
+          setTimeout(() => setIsTyping(null), 3000);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [stompClient, roomId, user]);
+
+  const handleTyping = (value: string) => {
+    setInput(value);
+
+    if (!stompClient || !stompClient.connected) return;
+
+    stompClient.publish({
+      destination: "/app/typing",
+      body: JSON.stringify({
+        roomId,
+        userId: user?.id,
+        username: user?.fullName || user?.username || "Anonymous",
+        typing: true,
+      }),
+    });
+  };
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -50,35 +86,45 @@ const Chat = ({ roomId }: ChatProps) => {
       destination: `/app/chat`,
       body: JSON.stringify({ ...message, roomId, userId: user?.id }),
     });
-    
+
     setInput("");
   };
 
-  useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
   return (
     <div className="flex flex-col md:flex-row gap-4">
-
+      <div className="w-full md:w-1/4 border rounded p-3 bg-white dark:bg-gray-800 text-sm">
+        <h3 className="font-semibold mb-2 text-gray-800 dark:text-white">👥 Participants</h3>
+        <ul className="list-disc list-inside space-y-1">
+          {participants.map((p, idx) => (
+            <li key={idx} className="text-gray-700 dark:text-gray-200">{p}</li>
+          ))}
+        </ul>
+      </div>
+      
       <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 space-y-4">
         <h2 className="text-2xl font-bold text-center dark:text-white">💬 Real-Time Chat</h2>
 
         <div className="text-start h-80 overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100">
+          {isTyping && (
+            <p className="text-sm italic text-gray-500 dark:text-gray-400">
+              {isTyping}
+            </p>
+          )}
+
           {[...messages]
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
             .map((msg, idx) => (
-            <div key={idx} className="mb-3">
-              <span className="font-semibold">{msg.sender}: </span>
-              <span>{msg.content}</span>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {isValidDate(msg.timestamp) ? new Date(msg.timestamp).toLocaleTimeString() : "Invalid date"}           
+              <div key={idx} className="mb-3">
+                <span className="font-semibold">{msg.sender}: </span>
+                <span>{msg.content}</span>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {isValidDate(msg.timestamp) ? new Date(msg.timestamp).toLocaleTimeString() : "Invalid date"}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           <div ref={messageEndRef} />
         </div>
-        
+
         {user && (
           <p className="text-start text-sm text-gray-600 dark:text-gray-400 mb-2">
             Logged in as <span className="font-semibold">{user.fullName || user.username}</span>
@@ -88,7 +134,7 @@ const Chat = ({ roomId }: ChatProps) => {
         <div className="flex gap-2">
           <input
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => handleTyping(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             className="flex-1 p-2 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-600"
             placeholder="Type a message..."
@@ -101,14 +147,8 @@ const Chat = ({ roomId }: ChatProps) => {
           </button>
         </div>
       </div>
-      <div className="w-full md:w-1/4 border rounded p-3 bg-white dark:bg-gray-800 text-sm">
-        <h3 className="font-semibold mb-2 text-gray-800 dark:text-white">👥 Participants</h3>
-        <ul className="list-disc list-inside space-y-1">
-          {participants.map((p, idx) => (
-            <li key={idx} className="text-gray-700 dark:text-gray-200">{p}</li>
-          ))}
-        </ul>
-      </div>
+
+      
     </div>
   );
 };
