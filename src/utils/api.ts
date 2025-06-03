@@ -19,3 +19,15 @@ export const fetchOnlineUsers = async (): Promise<Record<string, number>> => {
   if (!res.ok) throw new Error("Failed to fetch online users");
   return res.json();
 };
+
+export const login = async (user: any) => {
+  await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: user.id,
+      name: user.fullName,
+      email: user.primaryEmailAddress?.emailAddress,
+    }),
+  });
+};

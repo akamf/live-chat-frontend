@@ -46,7 +46,7 @@ const Chat = ({ roomId }: ChatProps) => {
 
     stompClient?.publish({
       destination: `/app/chat`,
-      body: JSON.stringify({ ...message, roomId }),
+      body: JSON.stringify({ ...message, roomId, userId: user?.id }),
     });
     
     setInput("");
