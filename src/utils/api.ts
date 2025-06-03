@@ -5,7 +5,7 @@ export async function fetchRecentMessages(
   roomId: string
 ) {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/${roomId}`);
+    const res = await fetch(`${import.meta.env.API_URL}/messages/${roomId}`);
     if (!res.ok) throw new Error("Failed to fetch messages");
     const data = await res.json();
     setMessages(data);
@@ -15,13 +15,13 @@ export async function fetchRecentMessages(
 };
 
 export const fetchOnlineUsers = async (): Promise<Record<string, number>> => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/online-counts`);
+  const res = await fetch(`${import.meta.env.API_URL}/chat-rooms/online-counts`);
   if (!res.ok) throw new Error("Failed to fetch online users");
-  return res.json(); // { "1": 3, "2": 5, ... }
+  return res.json();
 };
 
 export const login = async (user: any) => {
-  await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+  await fetch(`${import.meta.env.API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -33,7 +33,7 @@ export const login = async (user: any) => {
 };
 
 export const fetchPublicChatRooms = async () => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/public`);
+  const res = await fetch(`${import.meta.env.API_URL}/chat-rooms/public`);
   if (!res.ok) throw new Error("Failed to fetch chat rooms");
   return res.json();
 };

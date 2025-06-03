@@ -13,7 +13,7 @@ export const useChatConnection = (
     if (!roomId) return;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_SOCKET_URI}?room-id=${roomId}`), 
+      webSocketFactory: () => new SockJS(`${import.meta.env.SOCKET_URL}?room-id=${roomId}`), 
       reconnectDelay: 5000,
       connectHeaders: {
         "room-id": roomId,
