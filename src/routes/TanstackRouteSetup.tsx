@@ -32,7 +32,7 @@ const rootRoute = createRootRoute({
   ),
 });
 
-const indexRoute = createRoute({ path: '/', component: Index, getParentRoute: () => rootRoute });
+// const indexRoute = createRoute({ path: '/', component: Index, getParentRoute: () => rootRoute });
 const signInRoute = createRoute({ path: '/signin', component: SignIn, getParentRoute: () => rootRoute });
 const registerRoute = createRoute({ path: '/register', component: Register, getParentRoute: () => rootRoute });
 const profileRoute = createRoute({ path: '/profile', component: Profile, getParentRoute: () => rootRoute });
@@ -41,7 +41,7 @@ const roomListRoute = createRoute({ path: '/chat', component: ChatRoomList, getP
 const roomRoute = createRoute({ path: '/chat/$id', component: ChatRoom, getParentRoute: () => rootRoute });
 
 const routeTree = rootRoute.addChildren([
-  indexRoute,
+  // indexRoute,
   signInRoute,
   registerRoute,
   profileRoute,
