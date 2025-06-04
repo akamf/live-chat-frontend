@@ -5,11 +5,19 @@ import { useState } from "react";
 interface ParticipantsProps {
   roomId: string;
   typingUserIds: Record<string, boolean>;
+  textSize: "small" | "medium" | "large";
 }
 
-const Participants = ({ roomId, typingUserIds }: ParticipantsProps) => {
+const Participants = ({ roomId, typingUserIds, textSize }: ParticipantsProps) => {
   const participants: ChatUser[] = useParticipants(roomId);
   const [isOpen, setIsOpen] = useState(false);
+
+  const textSizeClass =
+    textSize === "small"
+      ? "text-sm"
+      : textSize === "large"
+      ? "text-lg"
+      : "text-base";
 
   return (
     <div className="w-full md:w-1/4 max-w-[75%] relative">
@@ -41,7 +49,7 @@ const Participants = ({ roomId, typingUserIds }: ParticipantsProps) => {
         <h3 className="font-semibold mb-2 text-gray-800 dark:text-white">👥 Participants</h3>
         <ul className="list-disc list-inside space-y-1">
           {participants.map((p, idx) => (
-            <li key={idx} className="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-200 my-8">
+            <li key={idx} className={`flex items-center gap-2 text-gray-700 dark:text-gray-200 ${textSizeClass}`}>
               <span>👤 {p.name}</span>
               {typingUserIds[p.id] && (
                 <span className="text-xs italic text-gray-500 dark:text-gray-400 ml-1">(typing...)</span>

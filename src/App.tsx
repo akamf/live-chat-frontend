@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { router } from "routes/TanstackRouteSetup";
-import { login } from "@utils/api";
+import { fetchUserSettings, login } from "@utils/api";
 
 import { useIdleSignOut } from "@hooks/useIdleSignOut";
 import { RouterProvider } from "@tanstack/react-router";
@@ -36,6 +36,13 @@ const App = () => {
         }, 2000);
         return;
       }
+
+      try {
+        const settings = await fetchUserSettings();
+        localStorage.setItem("settings", JSON.stringify(settings));
+      } catch (e) {
+        console.error("Failed to fetch user settings:", e);
+      }
       
       router.navigate({ to: "/chat" });
       setAuthReady(true);
@@ -43,6 +50,23 @@ const App = () => {
 
     doLogin();
   }, [isUserLoaded, isSignedIn, user]);
+
+  useEffect(() => {
+    const settings = JSON.parse(localStorage.getItem("settings") || "{}");
+    const darkMode = settings.darkMode || "system";
+
+    if (darkMode === "dark") {
+      document.documentElement.classList.add("dark");
+    } else if (darkMode === "light") {
+      document.documentElement.classList.remove("dark");
+    } else {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+  }, []);
 
   if (!authReady) {
     return (

@@ -8,16 +8,23 @@ import ChatBubble from "./ChatBubble";
 interface ChatProps {
   user: UserResource | null | undefined;
   roomId: string;
-  setTypingUserIds: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  textSize: "small" | "medium" | "large";
 }
 
-const Chat = ({ user, roomId, setTypingUserIds }: ChatProps) => {
+const Chat = ({ user, roomId, textSize }: ChatProps) => {
   const [sender, setSender] = useState("Anonymous");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 
   const messageEndRef = useRef<HTMLDivElement>(null);
   const stompClient = useChatConnection(roomId, user, setMessages);
+
+  const textSizeClass =
+    textSize === "small"
+      ? "text-sm"
+      : textSize === "large"
+      ? "text-lg"
+      : "text-base";
 
   useEffect(() => {
     if (user) {
@@ -68,7 +75,7 @@ const Chat = ({ user, roomId, setTypingUserIds }: ChatProps) => {
 
   return (
     <div className="w-full min-w-[20rem] md:min-w-[25rem] max-w-[75%] mx-auto p-4 sm:p-6 md:p-8 space-y-4">
-      <div className="text-start h-80 md:h-[32rem] overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100">
+      <div className={`text-start h-80 md:h-[32rem] overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100 ${textSizeClass}`}>
         {messages
           .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
           .map((msg, idx) => {

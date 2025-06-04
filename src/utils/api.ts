@@ -92,3 +92,12 @@ export const logout = async (userId: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const fetchUserSettings = async (): Promise<{ textSize: string; darkMode: string }> => {
+  const token = getToken();
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/user/settings`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) throw new Error("Failed to fetch user settings");
+  return res.json();
+};
