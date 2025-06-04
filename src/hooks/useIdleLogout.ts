@@ -16,6 +16,7 @@ export const useIdleSignOut = (timeoutMs: number = (15 * 60 * 1000)) => {
   useEffect(() => {
     const events = ["mousedown", "keydown", "click", "scroll"];
     events.forEach((event) => window.addEventListener(event, resetTimer));
+    resetTimer();
 
     return () => {
       clearTimeout(timer.current);
