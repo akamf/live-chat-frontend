@@ -16,7 +16,7 @@ export const useParticipants = (roomId: string) => {
     };
 
     fetchParticipants();
-    const interval = setInterval(fetchParticipants, 5000);
+    const interval = setInterval(fetchParticipants, 2000);
     return () => clearInterval(interval);
   }, [roomId]);
 
