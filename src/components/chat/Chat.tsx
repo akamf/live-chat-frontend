@@ -1,25 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatMessage } from "../../types";
-import { useUser } from "@clerk/clerk-react";
-import { useClerkToken } from "../../hooks/useClerkToken";
-import { useChatConnection } from "../../hooks/useChatConnection";
+import { ChatMessage } from "types";
+import { useChatConnection } from "@hooks/useChatConnection";
 import { fetchRecentMessages } from "@utils/api";
 import { isValidDate } from "@utils/date";
-import { useParticipants } from "@hooks/useParticipants";
+import { UserResource } from "@clerk/types";
 
 interface ChatProps {
+  user: UserResource | null | undefined;
   roomId: string;
-}
+};
 
-const Chat = ({ roomId }: ChatProps) => {
-  const { user } = useUser();
-  const { storeToken } = useClerkToken();
+const Chat = ({ user, roomId }: ChatProps) => {
   const [sender, setSender] = useState("Anonymous");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState<string | null>(null);
+
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const participants = useParticipants(roomId);
   const stompClient = useChatConnection(roomId, user, setMessages);
 
   useEffect(() => {
@@ -27,10 +24,6 @@ const Chat = ({ roomId }: ChatProps) => {
       setSender(user.fullName || user.username || "Anonymous");
     }
   }, [user]);
-
-  useEffect(() => {
-    storeToken();
-  }, [storeToken]);
 
   useEffect(() => {
     fetchRecentMessages(setMessages, roomId);
@@ -91,16 +84,7 @@ const Chat = ({ roomId }: ChatProps) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4">
-      <div className="w-full md:w-1/4 border rounded p-3 bg-white dark:bg-gray-800 text-sm">
-        <h3 className="font-semibold mb-2 text-gray-800 dark:text-white">👥 Participants</h3>
-        <ul className="list-disc list-inside space-y-1">
-          {participants.map((p, idx) => (
-            <li key={idx} className="text-gray-700 dark:text-gray-200">{p}</li>
-          ))}
-        </ul>
-      </div>
-      
+    <>
       <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 space-y-4">
         <h2 className="text-2xl font-bold text-center dark:text-white">💬 Real-Time Chat</h2>
 
@@ -147,9 +131,7 @@ const Chat = ({ roomId }: ChatProps) => {
           </button>
         </div>
       </div>
-
-      
-    </div>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Chat } from "@components";
+import { ChatRoomLayout } from "@components";
 import { useParams } from "@tanstack/react-router";
 
 const ChatRoom = () => {
@@ -9,7 +9,7 @@ const ChatRoom = () => {
       <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
         🧵 Chat Room
       </h1>
-      <Chat roomId={roomId} />
+      <ChatRoomLayout roomId={roomId} />
     </section>
   );
 };

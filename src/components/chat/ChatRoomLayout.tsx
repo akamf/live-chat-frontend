@@ -1,0 +1,30 @@
+import { useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { useClerkToken } from "@hooks/useClerkToken";
+
+import Chat from "./Chat";
+import Participants from "./Participants";
+
+interface ChatRoomProps {
+  roomId: string;
+};
+
+const ChatRoomLayout = ({ roomId }: ChatRoomProps) => {
+  const { user } = useUser();
+  const { storeToken } = useClerkToken();
+
+  useEffect(() => {
+    storeToken();
+  }, [storeToken]);
+
+  return (
+    <>
+      <div className="flex flex-col md:flex-row gap-4">
+        <Participants roomId={ roomId } />
+        <Chat user={ user } roomId={ roomId } />
+      </div>
+    </>
+  );
+};
+
+export default ChatRoomLayout;
