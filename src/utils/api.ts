@@ -84,7 +84,7 @@ export const logout = async (userId: string): Promise<boolean> => {
     }
 
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); // Om du sparar användardata
 
     return true;
   } catch (err) {
