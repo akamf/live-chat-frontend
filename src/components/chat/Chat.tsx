@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatMessage } from "../types";
+import { ChatMessage } from "../../types";
 import { useUser } from "@clerk/clerk-react";
-import { useClerkToken } from "../hooks/useClerkToken";
-import { useChatConnection } from "../hooks/useChatConnection";
+import { useClerkToken } from "../../hooks/useClerkToken";
+import { useChatConnection } from "../../hooks/useChatConnection";
 import { fetchRecentMessages } from "@utils/api";
 import { isValidDate } from "@utils/date";
 import { useParticipants } from "@hooks/useParticipants";
