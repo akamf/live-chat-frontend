@@ -4,6 +4,7 @@ import { useChatConnection } from "@hooks/useChatConnection";
 import { fetchRecentMessages } from "@utils/api";
 import { formatDate, isValidDate } from "@utils/date";
 import { UserResource } from "@clerk/types";
+import ChatBubble from "./ChatBubble";
 
 interface ChatProps {
   user: UserResource | null | undefined;
@@ -15,7 +16,6 @@ const Chat = ({ user, roomId }: ChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState<string | null>(null);
-  const [visibleDates, setVisibleDates] = useState<{ [index: number]: boolean }>({});
 
   const messageEndRef = useRef<HTMLDivElement>(null);
   const stompClient = useChatConnection(roomId, user, setMessages);
@@ -100,35 +100,16 @@ const Chat = ({ user, roomId }: ChatProps) => {
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
             .map((msg, idx) => {
               const isOwnMessage = msg.sender === sender;
-              const showDate = visibleDates[idx] === true;
 
               return (
-                <div
+                <ChatBubble
                   key={idx}
-                  className={`mb-3 flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
-                  onClick={() => setVisibleDates(prev => ({ ...prev, [idx]: !prev[idx] }))}
-                >
-                  <div
-                    className={`max-w-[90%] min-w-[75%] rounded-lg px-3 py-2 bg-gray-200 dark:bg-gray-700 text-black dark:text-white ${
-                      isOwnMessage ? "text-right" : "text-left"
-                    }`}
-                  >
-                    <div className="text-sm">{msg.content}</div>
-                    <div className="mt-2 text-xs font-semibold">
-                      {isOwnMessage ? (
-                        <>
-                          <span className="text-xs italic text-gray-900 dark:text-gray-300">{showDate ? `${formatDate(msg.timestamp)}   ` : ""}</span>{msg.sender}
-                        </>
-
-                      ) : (
-                        <>
-                          {msg.sender}<span className="text-xs italic text-gray-900 dark:text-gray-300">{showDate ? `   ${formatDate(msg.timestamp)}` : ""}</span>
-                        </>
-                      )}
-                      
-                    </div>
-                  </div>
-                </div>
+                  sender={msg.sender}
+                  content={msg.content}
+                  timestamp={msg.timestamp}
+                  isOwnMessage={isOwnMessage}
+                  index={idx}
+                />
               );
             })}
           <div ref={messageEndRef} />
