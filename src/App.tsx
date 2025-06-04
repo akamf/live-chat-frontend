@@ -1,11 +1,15 @@
 import { useUser } from "@clerk/clerk-react";
+import { useIdleSignOut } from "@hooks/useIdleLogout";
 import { RouterProvider } from "@tanstack/react-router";
 import { login } from "@utils/api";
 import { useEffect } from "react";
 import { router } from "routes/TanstackRouteSetup";
 
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
 const App = () => {
   const { user } = useUser();
+  useIdleSignOut(FIFTEEN_MINUTES);
   
   useEffect(() => {
     if (!user) return;
