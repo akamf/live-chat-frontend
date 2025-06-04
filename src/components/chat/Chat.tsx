@@ -53,10 +53,11 @@ const Chat = ({ user, roomId, setTypingUserIds }: ChatProps) => {
 
     const message: ChatMessage = {
       sender,
+      senderId: user?.id || "",
       content: input.trim(),
       timestamp: new Date().toISOString(),
     };
-
+    
     stompClient?.publish({
       destination: `/app/chat`,
       body: JSON.stringify({ ...message, roomId, userId: user?.id }),
@@ -71,7 +72,7 @@ const Chat = ({ user, roomId, setTypingUserIds }: ChatProps) => {
         {messages
           .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
           .map((msg, idx) => {
-            const isOwnMessage = msg.sender === sender;
+            const isOwnMessage = msg.senderId === user?.id;
             return (
               <ChatBubble
                 key={idx}
