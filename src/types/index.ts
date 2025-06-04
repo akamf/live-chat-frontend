@@ -9,3 +9,8 @@ export interface UserResource {
   fullName: string;
   email: string;
 };
+
+export interface Participant {
+  id: string;
+  name: string;
+};

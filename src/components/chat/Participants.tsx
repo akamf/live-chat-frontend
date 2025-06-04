@@ -13,7 +13,7 @@ const Participants = ({ roomId }: ParticipantsProps) => {
         <h3 className="font-semibold mb-2 text-gray-800 dark:text-white">👥 Participants</h3>
         <ul className="list-disc list-inside space-y-1">
           {participants.map((p, idx) => (
-            <li key={idx} className="text-gray-700 dark:text-gray-200">{p}</li>
+            <li key={idx} className="text-gray-700 dark:text-gray-200">{p.name}</li>
           ))}
         </ul>
       </div>

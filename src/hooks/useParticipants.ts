@@ -1,12 +1,13 @@
+import { Participant } from "types";
 import { useEffect, useState } from "react";
 
 export const useParticipants = (roomId: string) => {
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/rooms/${roomId}/participants`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/${roomId}/online`);
         const data = await res.json();
         setParticipants(data);
       } catch (err) {
@@ -15,7 +16,7 @@ export const useParticipants = (roomId: string) => {
     };
 
     fetchParticipants();
-    const interval = setInterval(fetchParticipants, 5000); // polla var 5:e sekund
+    const interval = setInterval(fetchParticipants, 5000);
     return () => clearInterval(interval);
   }, [roomId]);
 
