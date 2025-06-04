@@ -62,3 +62,33 @@ export const fetchPublicChatRooms = async () => {
   if (!res.ok) throw new Error("Failed to fetch chat rooms");
   return res.json();
 };
+
+export const logout = async (userId: string): Promise<boolean> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token found");
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Backend logout failed", res.status, errText);
+      throw new Error("Backend logout failed");
+    }
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    return true;
+  } catch (err) {
+    console.error("Backend logout error:", err);
+    return false;
+  }
+};
