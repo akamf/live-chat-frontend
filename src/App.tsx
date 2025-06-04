@@ -5,11 +5,9 @@ import { login } from "@utils/api";
 import { useEffect } from "react";
 import { router } from "routes/TanstackRouteSetup";
 
-const FIFTEEN_MINUTES = 15 * 60 * 1000;
-
 const App = () => {
   const { user } = useUser();
-  useIdleSignOut(FIFTEEN_MINUTES);
+  useIdleSignOut();
   
   useEffect(() => {
     if (!user) return;
