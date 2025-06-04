@@ -36,7 +36,8 @@ const App = () => {
         }, 2000);
         return;
       }
-
+      
+      router.navigate({ to: "/chat" });
       setAuthReady(true);
     };
 
