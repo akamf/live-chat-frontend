@@ -4,13 +4,7 @@ export interface ChatMessage {
   timestamp: string;
 };
 
-export interface UserResource {
-  id: string;
-  fullName: string;
-  email: string;
-};
-
-export interface Participant {
+export interface ChatUser {
   id: string;
   name: string;
 };

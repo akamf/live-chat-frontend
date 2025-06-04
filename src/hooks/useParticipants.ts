@@ -1,8 +1,8 @@
-import { Participant } from "types";
+import { ChatUser } from "types";
 import { useEffect, useState } from "react";
 
 export const useParticipants = (roomId: string) => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participants, setParticipants] = useState<ChatUser[]>([]);
 
   useEffect(() => {
     const fetchParticipants = async () => {
