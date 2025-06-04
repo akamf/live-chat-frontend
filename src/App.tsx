@@ -7,11 +7,14 @@ import { login } from "@utils/api";
 
 import { useIdleSignOut } from "@hooks/useIdleSignOut";
 import { RouterProvider } from "@tanstack/react-router";
+import { useClerkToken } from "@hooks/useClerkToken";
 
 const App = () => {
   const { user, isLoaded: isUserLoaded, isSignedIn } = useUser();
   const { signOut } = useAuth();
-  const [authReady, setAuthReady] = useState(false);  
+  const [authReady, setAuthReady] = useState(false);
+  const { storeToken } = useClerkToken();
+  
   useIdleSignOut();
   
   useEffect(() => {
@@ -22,6 +25,8 @@ const App = () => {
         setAuthReady(true);
         return;
       }
+      
+      await storeToken();
 
       const success = await login(user);
       if (!success) {

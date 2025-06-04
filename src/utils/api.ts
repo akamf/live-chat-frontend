@@ -1,11 +1,16 @@
-import { ChatMessage } from "../types";
+import { ChatMessage } from "types";
+
+const getToken = (): string | null => localStorage.getItem("token");
 
 export async function fetchRecentMessages(
   setMessages: (msgs: ChatMessage[]) => void,
   roomId: string
 ) {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/${roomId}`);
+    const token = getToken();
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/${roomId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
     if (!res.ok) throw new Error("Failed to fetch messages");
     const data = await res.json();
     setMessages(data);
@@ -15,7 +20,10 @@ export async function fetchRecentMessages(
 };
 
 export const fetchOnlineUsers = async (): Promise<Record<string, number>> => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/online-counts`);
+  const token = getToken();
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/online-counts`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   if (!res.ok) throw new Error("Failed to fetch online users");
   return res.json();
 };
@@ -24,7 +32,9 @@ export const login = async (user: any): Promise<boolean> => {
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json" 
+      },
       body: JSON.stringify({
         userId: user.id,
         name: user.fullName,
@@ -32,7 +42,11 @@ export const login = async (user: any): Promise<boolean> => {
       }),
     });
 
-    if (!res.ok) throw new Error("Backend login failed");
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Backend login failed", res.status, errText);
+      throw new Error("Backend login failed");
+    }
     return true;
   } catch (err) {
     console.error("Backend login error:", err);
@@ -41,7 +55,10 @@ export const login = async (user: any): Promise<boolean> => {
 };
 
 export const fetchPublicChatRooms = async () => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/public`);
+  const token = getToken();
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/public`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   if (!res.ok) throw new Error("Failed to fetch chat rooms");
   return res.json();
 };

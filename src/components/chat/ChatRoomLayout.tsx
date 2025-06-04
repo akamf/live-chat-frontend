@@ -11,11 +11,6 @@ interface ChatRoomProps {
 
 const ChatRoomLayout = ({ roomId }: ChatRoomProps) => {
   const { user } = useUser();
-  const { storeToken } = useClerkToken();
-
-  useEffect(() => {
-    storeToken();
-  }, [storeToken]);
 
   return (
     <>

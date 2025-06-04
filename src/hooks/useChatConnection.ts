@@ -8,12 +8,13 @@ export const useChatConnection = (
   onMessageReceived: (updateFn: (prev: any[]) => any[]) => void
 ): Client | null => {
   const clientRef = useRef<Client | null>(null);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!roomId) return;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_SOCKET_URL}?room-id=${roomId}`), 
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_SOCKET_URL}?token=${token}&room-id=${roomId}`), 
       reconnectDelay: 5000,
       connectHeaders: {
         "room-id": roomId,

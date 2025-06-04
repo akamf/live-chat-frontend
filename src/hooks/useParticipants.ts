@@ -1,5 +1,6 @@
 import { ChatUser } from "types";
 import { useEffect, useState } from "react";
+import { useClerkToken } from "./useClerkToken";
 
 export const useParticipants = (roomId: string) => {
   const [participants, setParticipants] = useState<ChatUser[]>([]);
@@ -7,7 +8,11 @@ export const useParticipants = (roomId: string) => {
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/${roomId}/online`);
+        const token = localStorage.getItem("token") || null;
+        
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/${roomId}/online`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         const data = await res.json();
         setParticipants(data);
       } catch (err) {
