@@ -86,10 +86,10 @@ const Chat = ({ user, roomId }: ChatProps) => {
 
   return (
     <>
-      <div className="w-full mx-auto p-4 sm:p-6 md:p-8 space-y-4">
+      <div className="w-full min-w-[20rem] md:min-w-[25rem] max-w-[75%] mx-auto p-4 sm:p-6 md:p-8 space-y-4">
         <h2 className="text-2xl font-bold text-center dark:text-white">💬 Real-Time Chat</h2>
 
-        <div className="text-start w-[20rem] md:w-[25rem] h-80 md:h-[32rem] overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100">
+        <div className="text-start h-80 md:h-[32rem] overflow-y-auto border rounded p-3 bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-gray-100">
           {isTyping && (
             <p className="text-sm italic text-gray-500 dark:text-gray-400">
               {isTyping}

@@ -18,6 +18,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
 }) => {
   const [visibleDates, setVisibleDates] = useState<{ [index: number]: boolean }>({});
   const showDate = visibleDates[index] === true;
+
   return (
     <div
       key={index}
@@ -25,7 +26,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
       onClick={() => setVisibleDates(prev => ({ ...prev, [index]: !prev[index] }))}
     >
       <div
-        className={`relative max-w-[90%] min-w-[55%] px-3 py-2 rounded-lg bg-gray-300 text-black dark:text-white ${
+        className={`relative max-w-[70%] min-w-[25%] px-3 py-2 rounded-lg bg-gray-300 text-black dark:text-white ${
           isOwnMessage
             ? "dark:bg-gray-600 text-right rounded-br-md"
             : "dark:bg-gray-700 rounded-bl-md"
@@ -35,12 +36,12 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
         <div className="mt-2 text-xs font-semibold">
           {isOwnMessage ? (
               <>
-                <span className="text-xs italic text-gray-900 dark:text-gray-300">{showDate ? `${formatDate(timestamp)}   ` : ""}</span>{sender}
+                <span className="italic text-gray-900 dark:text-gray-300">{showDate ? `${formatDate(timestamp)} ` : ""}</span>{sender}
               </>
 
             ) : (
               <>
-                {sender}<span className="text-xs italic text-gray-900 dark:text-gray-300">{showDate ? `   ${formatDate(timestamp)}` : ""}</span>
+                {sender}<span className="italic text-gray-900 dark:text-gray-300">{showDate ? ` ${formatDate(timestamp)}` : ""}</span>
               </>
             )}
             

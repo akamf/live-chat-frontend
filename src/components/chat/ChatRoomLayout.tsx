@@ -19,7 +19,7 @@ const ChatRoomLayout = ({ roomId }: ChatRoomProps) => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4 w-full h-full md:max-w-[75%]">
         <Participants roomId={ roomId } />
         <Chat user={ user } roomId={ roomId } />
       </div>
