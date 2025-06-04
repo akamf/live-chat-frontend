@@ -7,7 +7,6 @@ import { login } from "@utils/api";
 
 import { useIdleSignOut } from "@hooks/useIdleSignOut";
 import { RouterProvider } from "@tanstack/react-router";
-import { Footer, LoadingScreen, Navbar } from "@components";
 
 const App = () => {
   const { user, isLoaded: isUserLoaded, isSignedIn } = useUser();
