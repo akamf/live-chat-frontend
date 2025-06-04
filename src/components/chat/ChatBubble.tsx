@@ -22,11 +22,11 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   return (
     <div
       key={index}
-      className={`flex w-full mb-3 ${isOwnMessage ? "justify-end mr-2" : "justify-start ml-2"} animate-fade-in`}
+      className={`flex w-full mb-3 ${isOwnMessage ? "justify-end" : "justify-start"} animate-fade-in`}
       onClick={() => setVisibleDates(prev => ({ ...prev, [index]: !prev[index] }))}
     >
       <div
-        className={`relative max-w-[70%] min-w-[25%] px-3 py-2 rounded-lg bg-gray-300 text-black dark:text-white ${
+        className={`relative max-w-[70%] min-w-[40%] px-3 py-2 rounded-lg bg-gray-300 text-black dark:text-white ${
           isOwnMessage
             ? "dark:bg-gray-600 text-right rounded-br-md"
             : "dark:bg-gray-700 rounded-bl-md"
@@ -46,14 +46,6 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             )}
             
           </div>
-
-        <div
-          className={`absolute w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent ${
-            isOwnMessage
-              ? "border-l-[10px] border-l-gray-300 dark:border-l-gray-600 right-[-10px] bottom-1"
-              : "border-r-[10px] border-r-gray-300 dark:border-r-gray-700 left-[-10px] bottom-1"
-          }`}
-        />
       </div>
     </div>
   );
