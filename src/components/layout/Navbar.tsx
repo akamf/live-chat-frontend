@@ -34,9 +34,9 @@ const Navbar = () => {
             <Link to="/profile" className={isActive("/profile")}>
               Profile
             </Link>
-            <Link to="/settings" className={isActive("/settings")}>
+            {/* <Link to="/settings" className={isActive("/settings")}>
               Settings
-            </Link>
+            </Link> */}
             <UserButton afterSignOutUrl="/" />
           </div>
         </SignedIn>

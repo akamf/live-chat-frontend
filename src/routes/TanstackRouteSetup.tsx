@@ -46,7 +46,7 @@ const rootRoute = createRootRoute({
 const signInRoute = createRoute({ path: '/signin', component: SignIn, getParentRoute: () => rootRoute });
 const registerRoute = createRoute({ path: '/register', component: Register, getParentRoute: () => rootRoute });
 const profileRoute = createRoute({ path: '/profile', component: Profile, getParentRoute: () => rootRoute });
-const settingsRoute = createRoute({ path: '/settings', component: Settings, getParentRoute: () => rootRoute });
+// const settingsRoute = createRoute({ path: '/settings', component: Settings, getParentRoute: () => rootRoute });
 const roomListRoute = createRoute({ path: '/chat', component: ChatRoomList, getParentRoute: () => rootRoute });
 const roomRoute = createRoute({ path: '/chat/$id', component: ChatRoom, getParentRoute: () => rootRoute });
 
@@ -55,7 +55,7 @@ const routeTree = rootRoute.addChildren([
   signInRoute,
   registerRoute,
   profileRoute,
-  settingsRoute,
+  // settingsRoute,
   roomListRoute,
   roomRoute,
 ]);

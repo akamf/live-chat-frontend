@@ -6,7 +6,9 @@ const ChatRoomList = () => {
   const navigate = useNavigate();
   const [selectedRoom, setSelectedRoom] = useState("");
   const [onlineMap, setOnlineMap] = useState<Record<string, number>>({});
-  const [rooms, setRooms] = useState<{ id: string; name: string; maxUsers: number }[]>([]);
+  const [rooms, setRooms] = useState<{
+    description: string | undefined; id: string; name: string; maxUsers: number 
+}[]>([]);
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -15,7 +17,8 @@ const ChatRoomList = () => {
         setRooms(data.map((room: any) => ({
           id: room.id.toString(),
           name: room.name,
-          maxUsers: room.maxUsers
+          maxUsers: room.maxUsers,
+          description: room.topic
         })));
       } catch (err) {
         console.error("Could not fetch rooms", err);
@@ -61,13 +64,17 @@ const ChatRoomList = () => {
       <select
         value={selectedRoom}
         onChange={handleSelect}
-        className="mt-4 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-sm"
+        className="text-lg mt-4 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-sm"
       >
         <option value="">Select a room...</option>
         {rooms.map((room) => {
           const online = onlineMap[room.id] || 0;
           return (
-            <option key={room.id} value={room.id}>
+            <option 
+              key={room.id} 
+              value={room.id}
+              title={room.description}  
+            >
               {`${room.name} ${online}/${room.maxUsers} in room`}
             </option>
           );
