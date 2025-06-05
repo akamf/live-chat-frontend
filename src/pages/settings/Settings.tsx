@@ -1,3 +1,4 @@
+import { useClerkToken } from "@hooks/useClerkToken";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -5,11 +6,13 @@ const Settings = () => {
   const [textSize, setTextSize] = useState<"small" | "medium" | "large">("medium");
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
 
+  const { fetchToken } = useClerkToken();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+      const token = await fetchToken();
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user/settings`, {
         method: "PUT",
         headers: {

@@ -4,11 +4,12 @@ import { useClerkToken } from "./useClerkToken";
 
 export const useParticipants = (roomId: string) => {
   const [participants, setParticipants] = useState<ChatUser[]>([]);
+  const { fetchToken } = useClerkToken();
 
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        const token = localStorage.getItem("token") || null;
+        const token = await fetchToken();
         
         const res = await fetch(`${import.meta.env.VITE_API_URL}/chat-rooms/${roomId}/online`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},

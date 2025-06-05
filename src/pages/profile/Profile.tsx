@@ -1,15 +1,17 @@
 import { useUser } from "@clerk/clerk-react";
+import { useClerkToken } from "@hooks/useClerkToken";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Profile = () => {
   const { user } = useUser();
+  const { fetchToken } = useClerkToken();
   const [name, setName] = useState(user?.fullName || user?.username || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = await fetchToken();
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
           headers: {
@@ -34,7 +36,7 @@ const Profile = () => {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = await fetchToken();
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
         method: "PUT",

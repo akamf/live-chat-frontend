@@ -7,13 +7,11 @@ import { fetchUserSettings, login } from "@utils/api";
 
 import { useIdleSignOut } from "@hooks/useIdleSignOut";
 import { RouterProvider } from "@tanstack/react-router";
-import { useClerkToken } from "@hooks/useClerkToken";
 
 const App = () => {
   const { user, isLoaded: isUserLoaded, isSignedIn } = useUser();
   const { signOut } = useAuth();
   const [authReady, setAuthReady] = useState(false);
-  const { storeToken } = useClerkToken();
   
   useIdleSignOut();
   
@@ -26,8 +24,6 @@ const App = () => {
         return;
       }
       
-      await storeToken();
-
       const success = await login(user);
       if (!success) {
         toast.error("Failed to log in, due to server issues. Try again later.");
