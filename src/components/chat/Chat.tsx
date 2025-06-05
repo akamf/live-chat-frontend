@@ -4,6 +4,7 @@ import { useChatConnection } from "@hooks/useChatConnection";
 import { fetchRecentMessages } from "@utils/api";
 import { UserResource } from "@clerk/types";
 import ChatBubble from "./ChatBubble";
+import { useNavigate } from "@tanstack/react-router";
 
 interface ChatProps {
   user: UserResource | null | undefined;
@@ -16,6 +17,7 @@ const Chat = ({ user, roomId, textSize }: ChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 
+  const navigate = useNavigate();
   const messageEndRef = useRef<HTMLDivElement>(null);
   const stompClient = useChatConnection(roomId, user, setMessages);
 
@@ -95,6 +97,12 @@ const Chat = ({ user, roomId, textSize }: ChatProps) => {
       </div>
 
       <div className="flex gap-2">
+        <button
+          onClick={() => navigate({ to: "/chat" })}
+          className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded"
+        >
+          ⬅ Back
+        </button>
         <input
           value={input}
           onChange={(e) => handleTyping(e.target.value)}

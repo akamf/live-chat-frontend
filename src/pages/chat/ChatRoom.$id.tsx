@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 
 const ChatRoom = () => {
   const { id: roomId } = useParams({ from: "/chat/$id" });
-    const [room, setRoom] = useState<{ id: string; name: string; topic: string } | null>(null);
-
+  const [room, setRoom] = useState<{ id: string; name: string; topic: string } | null>(null);
 
   useEffect(() => {
     const loadRoom = async () => {
