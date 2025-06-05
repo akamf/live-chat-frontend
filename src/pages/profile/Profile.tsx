@@ -1,11 +1,33 @@
 import { useUser } from "@clerk/clerk-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Profile = () => {
   const { user } = useUser();
   const [name, setName] = useState(user?.fullName || user?.username || "");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to load user");
+
+        const data = await res.json();
+        setName(data.name);
+      } catch (err) {
+        toast.error("Failed to load profile.");
+      }
+    };
+
+    if (user) fetchUser();
+  }, [user]);
 
   const handleSave = async () => {
     if (!name.trim()) return toast.error("Name cannot be empty");
@@ -47,14 +69,18 @@ const Profile = () => {
         <div className="text-left space-y-4">
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Name
+              Display Name
             </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-700 dark:text-white"
-            />
+            {!name && loading ? (
+              <div className="text-gray-500 italic">Loading profile...</div>
+            ) : (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-700 dark:text-white"
+              />
+            )}
           </div>
         </div>
         <div className="text-left space-y-4">
