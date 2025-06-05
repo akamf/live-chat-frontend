@@ -96,10 +96,10 @@ const Chat = ({ user, roomId, textSize }: ChatProps) => {
         <div ref={messageEndRef} />
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <button
           onClick={() => navigate({ to: "/chat" })}
-          className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded"
+          className="sm:w-auto w-full px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded"
         >
           ⬅ Back
         </button>
@@ -107,12 +107,13 @@ const Chat = ({ user, roomId, textSize }: ChatProps) => {
           value={input}
           onChange={(e) => handleTyping(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          className="flex-1 p-2 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-600"
+          className="flex-1 px-3 py-2 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-600"
           placeholder="Type a message..."
         />
+
         <button
           onClick={handleSend}
-          className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded"
+          className="sm:w-auto w-full px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded"
         >
           Send
         </button>

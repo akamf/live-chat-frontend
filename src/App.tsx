@@ -67,7 +67,7 @@ const App = () => {
   if (!authReady) {
     return (
       <>
-        <Toaster position="top-right" />
+        <Toaster position="top-left" />
          <section className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col">
           <main className="flex-1 px-4 sm:px-6 md:px-8 py-4">
             <div className="flex flex-col justify-center items-center h-screen space-y-4">
@@ -82,7 +82,7 @@ const App = () => {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-left" />
       <RouterProvider router={router} />;
     </>
   );
