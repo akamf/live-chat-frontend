@@ -19,6 +19,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   const [visibleDates, setVisibleDates] = useState<{ [index: number]: boolean }>({});
   const showDate = visibleDates[index] === true;
 
+  if (!sender || sender.trim() === "") {
+    return (
+      <div key={index} className="w-full text-center my-2 text-black dark:text-white text-sm italic">
+        {content}
+      </div>
+    );
+  }
+
   return (
     <div
       key={index}
